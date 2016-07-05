@@ -1,0 +1,184 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <tweet-text></tweet-text>
+
+Example:
+
+    <tweet-text>
+      <h2>Hello tweet-text</h2>
+    </tweet-text>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="tweet-text">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      .author img {
+        display: block;
+        float: left;
+        margin-right: 5px;
+        max-height: 100px;
+        max-width: 100px;
+      }
+    </style>
+
+    <p id="text"></p>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'tweet-text',
+
+      properties: {
+        /**
+         * `fancy` indicates that the element should don a monocle and tophat,
+         * while checking its pocket watch.
+         */
+        fancy: Boolean,
+
+        /**
+         * Describes the author of the element, but is really just an excuse to
+         * show off JSDoc annotations.
+         *
+         * @type {{name: string, image: string}}
+         */
+        author: {
+          type: Object,
+          // Use `value` to provide a default value for a property, by setting it
+          // on your element's prototype.
+          //
+          // If you provide a function, as we do here, Polymer will call that
+          // _per element instance_.
+          //
+          // We do that to ensure that each element gets its own copy of the
+          // value, rather than having it shared across all instances (via the
+          // prototype).
+          value: function() {
+            return {
+              name:  'Dimitri Glazkov',
+              image: 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg',
+            };
+          }
+        },
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+
+        this.$.text.innerHTML = this.parseText(this.text, this.entities);
+
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+      replaceUrls(text, urls) {
+        if (!urls.length)
+          return text;
+
+        urls.forEach((url) => {
+          text = text.replace(url.url,
+            `<a target="_blank" href="${url.expanded_url}">${url.display_url}</a>`
+          );
+        })
+        return text;
+      },
+      replaceUserMentions(text, userMentions) {
+        if (!userMentions.length)
+          return text;
+
+        userMentions.forEach((mention, index) => {
+          let ind = text.indexOf(mention.screen_name);
+          text = text.slice(0, ind - 1) + text.slice(ind);
+          text = text.replace(mention.screen_name,
+            `<a href="/user/${mention.screen_name}">@${mention.screen_name}</a>`
+          );
+        })
+        return text;
+      },
+      replaceHashTags(text, hashtags) {
+        if (!hashtags.length)
+          return text;
+
+        hashtags.forEach((hashtag, index) => {
+          let ind = text.indexOf(hashtag.text);
+          text = text.slice(0, ind - 1) + text.slice(ind);
+          text = text.replace(hashtag.text,
+            `<a target="_blank" href="${hashtag.text}">#${hashtag.text}</a>`
+          );
+        })
+
+        return text;
+      },
+
+      parseText(text, entities) {
+        text = this.replaceUserMentions(text, entities.user_mentions);
+        text = this.replaceHashTags(text, entities.hashtags);
+        text = this.replaceUrls(text, entities.urls);
+        return text;
+      },
+      sayHello: function(greeting) {
+        var response = greeting || 'Hello World!';
+        return 'the-tweet says, ' + response;
+      },
+
+      /**
+       * The `tweet-text-lasers` event is fired whenever `fireLasers` is called.
+       *
+       * @event tweet-text-lasers
+       * @detail {{sound: String}}
+       */
+
+      /**
+       * Attempt to destroy this element's enemies with a beam of light!
+       *
+       * Or, at least, dispatch an event in the vain hope that someone else will
+       * do the zapping.
+       */
+      fireLasers: function() {
+        this.fire('tweet-text-lasers', {sound: 'Pew pew!'});
+      }
+    });
+  </script>
+</dom-module>

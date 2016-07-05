@@ -1,0 +1,63 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+
+
+<dom-module id="tweet-footer">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+    </style>
+    <template is="dom-if" if="{{favorited}}">
+      <paper-icon-button icon="favorite" title="heart" on-click="likeTweet"></paper-icon-button>
+    </template>
+    <template is="dom-if" if="{{!favorited}}">
+      <paper-icon-button icon="favorite-border" title="heart" on-click="likeTweet"></paper-icon-button>
+    </template>
+
+    <template is="dom-if" if="{{retweeted}}">
+      <paper-icon-button icon="av:repeat" title="heart"></paper-icon-button>
+    </template>
+    <template is="dom-if" if="{{!retweeted}}">
+      <paper-icon-button icon="av:repeat" title="heart"></paper-icon-button>
+    </template>
+
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'tweet-footer',
+
+      properties: {
+        tweetId: {
+          type: String
+        },
+        favorited: {
+          type: Boolean,
+          observer: '_changed'
+        },
+        retweeted: {
+          type: Boolean
+          observer: '_changed'
+        },
+      },
+      _changed: function(tweet){
+        console.log('footer changed');
+      },
+      likeTweet: function(){
+        var action = {
+          type: (!this.favorited) ? 'FAVORITE_TWEET' : 'UNFAVORITE_TWEET',
+          id: this.tweetId
+        }
+        store.fire('dispatch', action);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,140 @@
+
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/classes/iron-shadow-flex-layout.html">
+<link rel="import" href="../../../bower_components/moment-element/moment-element.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../tweet-text/tweet-text.html">
+<link rel="import" href="../tweet-footer/tweet-footer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+Example:
+    <the-tweet></the-tweet>
+Example:
+    <the-tweet>
+      <h2>Hello the-tweet</h2>
+    </the-tweet>
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="the-tweet">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .tweet-wrapper {
+        background: #fff;
+        border-bottom: 1px solid #eaeaea;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .tweet {
+        color: #333;
+      }
+      .tweet a {
+        color: #333;
+      }
+      .user {
+        font-size: 12px;
+      }
+      .user a {
+        text-decoration: none;
+      }
+      .user a:hover {
+        text-decoration: underline;
+      }
+      .name {
+        margin: 0;
+        line-height: 1em;
+        margin-right: 10px;
+      }
+      .avatar {
+        height: 50px;
+        width: 50px;
+        margin-right: 10px;
+        margin-left: 10px;
+        overflow: hidden;
+        border-radius: 4px;
+      }
+      .avatar img {
+        height: 100%;
+        width: 100%;
+      }
+
+    </style>
+    <div class="tweet-wrapper layout vertical" onClick={this.openModal}>
+      <div hidden$="{{pooping.stuff}}">poop</div>
+      <div class="tweet layout horizontal">
+          <!-- <ReactTooltip effect="solid" delayShow={300} /> -->
+        <div class="avatar layout horizontal">
+          <img src="[[tweet.user.profile_image_url]]" alt="[[tweet.user.screen_name]]" />
+        </div>
+        <div class="tweet-content layout vertical flex">
+          <div class="user layout horizontal">
+            <h3 class="name"><a onClick={this.preventBubble.bind(this)} href={`/${user.screen_name}`}>[[tweet.user.name]]</a></h3>
+            <a href={`/${user.screen_name}`} onClick={this.preventBubble.bind(this)} class="username">@[[tweet.user.screen_name]]</a>
+            <span>&nbsp;•&nbsp;</span>
+            <div>
+              <a href="" id="createdAt" class="tweet-date" data-tip={Moment(created_at).format('HH:mma - MMM DD YYYY')}><moment-element to="[[tweet.created_at]]"></moment-element></a>
+              <paper-tooltip for="createdAt"><moment-element datetime="[[tweet.created_at]]" format="'HH:mma - MMM DD YYYY'"></moment-element></paper-tooltip>
+            </div>
+          </div>
+          <!-- <TweetText tweet={this.props.tweet}></TweetText> -->
+          <div>
+            <tweet-text text="[[tweet.text]]" entities="[[tweet.entities]]"></tweet-text>
+
+          </div>
+          <footer class="tweet-footer layout horizontal">
+            <!-- <div class="reply">
+              <WriteTweet replyTweet={this.props.tweet}/>
+            </div> -->
+            <tweet-footer tweet-id="[[tweet.id_str]]" favorited="[[tweet.favorited]]" retweeted="[[tweet.retweeted]]"></tweet-footer>
+            <!-- <Favorite likeHandler={this.likeTweet.bind(this)} unlikeHandler={this.unlikeTweet.bind(this)} tweet={this.props.tweet} /> -->
+            <!-- <Retweet retweetHandler={this.retweetTweet.bind(this)} unretweetHandler={this.unretweetTweet.bind(this)} tweet={this.props.tweet} /> -->
+
+            <!-- <Modal
+              isOpen={this.state.modalIsOpen}
+              onRequestClose={this.closeModal}
+              style={customStyles} >
+
+              <div class="tweet-content">
+                <div class="user">
+                  <h3 class="name"><a href={`/${user.screen_name}`}>{user.name}</a></h3>
+                  <a href={`/${user.screen_name}`} class="username">@{user.screen_name}</a>
+                  <span>&nbsp;•&nbsp;</span>
+                  <div>
+                    <a href="" class="tweet-date" data-tip={Moment(created_at).format('HH:mma - MMM DD YYYY')}>{Moment(created_at).fromNow()}</a>
+                  </div>
+                </div>
+                <TweetText tweet={this.props.tweet}></TweetText>
+                {img}
+              </div>
+              <button onClick={this.closeModal}>close</button>
+            </Modal> -->
+          </footer>
+        </div>
+      </div>
+    </div>
+    <!-- <h1>&lt;the-tweet&gt;</h1>
+    <content></content>
+    <p class="author">
+      <img src$="{{author.image}}">
+      Cheers,<br/>
+      <span class="name">{{author.name}}</span>
+    </p> -->
+  </template>
+
+  <script src="the-tweet.js"></script>
+</dom-module>
