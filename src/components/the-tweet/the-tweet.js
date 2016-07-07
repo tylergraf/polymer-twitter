@@ -62,8 +62,8 @@ Polymer({
     '_tweetChanged(tweet.*)'
   ],
   _tweetChanged: function(tweet){
-    console.log('changed the tweet');
-    console.log(tweet);
+    // console.log('changed the tweet');
+    // console.log(tweet);
   },
   // Element Behavior
   /**

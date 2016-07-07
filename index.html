@@ -50,7 +50,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </script>
 
   <link rel="import" href="/src/my-app.html">
-  <link rel="import" href="/src/components/tweet-store/tweet-store.html">
 
   <style>
 
@@ -66,8 +65,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 </head>
 <body>
-  <tweet-store></tweet-store>
+
   <my-app></my-app>
 
+  <script src="/bower_components/rxjs/dist/rx.all.js"></script>
+  <script src="/src/store/tweet-store.js"></script>
 </body>
 </html>

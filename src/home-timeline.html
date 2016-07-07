@@ -39,8 +39,8 @@
       }
     </style>
     <div class="tweet-list">
-      <template is="dom-repeat" id="tweeties" items="{{tweets}}">
-        <the-tweet tweet="{{item}}"></the-tweet>
+      <template is="dom-repeat" id="tweeties" items="[[tweets]]">
+        <the-tweet tweet="[[item]]"></the-tweet>
       </template>
     </div>
 
@@ -50,31 +50,48 @@
 
     Polymer({
       is: 'home-timeline',
+      behaviors: [StoreBehavior],
       ready: function(){
         fetch('http://localhost:8080/tweets.json')
           .then(res=>{
             return res.json();
           })
           .then(tweets=>{
+
+            tweets = duplicateArr(tweets, 10);
             let action = {
               type: 'ADD_TWEETS',
               tweets: tweets
             }
-            store.fire('dispatch', action);
+            let event = new CustomEvent('dispatch', {detail: action});
+            document.dispatchEvent(event);
           })
+
       },
       attached: function() {
-        Rx.Observable.fromEvent(store, 'changed')
-          .subscribe((e)=>{
-            this.set('tweets', e.detail.tweets);
-          })
+
+        this.subscription = this.STATE
+          .subscribe((state)=>{
+            this.set('tweets', state.tweets);
+          });
       },
 
       detached: function() {
-        store.removeEventListener('changed');
-      },
-      _changed: function(e){}
+        this.subscription.dispose();
+      }
     });
+
+    function duplicateArr(arr, times){
+      var inc = 0;
+      var newArr = [].concat(arr);
+      for (var i = 0; i < times; i++) {
+        newArr = newArr.concat(arr.map((t)=>{
+          t.id_str += inc++;
+          return t;
+        }));
+      }
+      return newArr;
+    }
   </script>
 
 </dom-module>

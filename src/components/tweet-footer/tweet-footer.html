@@ -34,29 +34,19 @@
 
     Polymer({
       is: 'tweet-footer',
-
       properties: {
-        tweetId: {
-          type: String
-        },
-        favorited: {
-          type: Boolean,
-          observer: '_changed'
-        },
-        retweeted: {
-          type: Boolean
-          observer: '_changed'
-        },
-      },
-      _changed: function(tweet){
-        console.log('footer changed');
+        tweetId: String,
+        favorited: Boolean,
+        retweeted: Boolean
       },
       likeTweet: function(){
+
         var action = {
           type: (!this.favorited) ? 'FAVORITE_TWEET' : 'UNFAVORITE_TWEET',
           id: this.tweetId
         }
-        store.fire('dispatch', action);
+        let event = new CustomEvent('dispatch', {detail: action});
+        document.dispatchEvent(event);
       }
     });
   </script>
