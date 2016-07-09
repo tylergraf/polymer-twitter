@@ -1,0 +1,58 @@
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <like-count></like-count>
+
+Example:
+
+    <like-count>
+      <h2>Hello like-count</h2>
+    </like-count>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="like-count">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      .author img {
+        display: block;
+        float: left;
+        margin-right: 5px;
+        max-height: 100px;
+        max-width: 100px;
+      }
+    </style>
+
+    <p id="count">Like Count: [[likeCount]]</p>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'like-count',
+      behaviors: [StoreBehavior],
+      attached: function() {
+        this.hub.on('update', (newVal,oldVal)=>{
+          let likedTweets = newVal.tweets.filter((t)=>{
+            return t.favorited;
+          });
+          this.likeCount = likedTweets.length;
+        });
+      },
+      detached: function() {
+        this.hub.off('update')
+      }
+    });
+  </script>
+</dom-module>

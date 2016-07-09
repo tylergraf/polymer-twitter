@@ -1,0 +1,55 @@
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <tweet-count></tweet-count>
+
+Example:
+
+    <tweet-count>
+      <h2>Hello tweet-count</h2>
+    </tweet-count>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="tweet-count">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      .author img {
+        display: block;
+        float: left;
+        margin-right: 5px;
+        max-height: 100px;
+        max-width: 100px;
+      }
+    </style>
+
+    <p id="count">Tweet Count: [[tweetCount]]</p>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'tweet-count',
+      behaviors: [StoreBehavior],
+      attached: function() {
+        this.hub.on('update', (newVal,oldVal)=>{
+          this.tweetCount = newVal.tweets.length;
+        });
+      },
+      detached: function() {
+        this.hub.off('update')
+      }
+    });
+  </script>
+</dom-module>

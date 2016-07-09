@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
@@ -11,20 +11,25 @@
         display: block;
         box-sizing: border-box;
       }
-
+      paper-icon-button /deep/ svg {
+        fill: #ccc;
+      }
+      paper-icon-button.on /deep/ svg {
+        fill: #333;
+      }
     </style>
     <template is="dom-if" if="{{favorited}}">
-      <paper-icon-button icon="favorite" title="heart" on-click="likeTweet"></paper-icon-button>
+      <paper-icon-button icon="favorite" title="heart" on-click="likeTweet" class="on"></paper-icon-button>
     </template>
     <template is="dom-if" if="{{!favorited}}">
       <paper-icon-button icon="favorite-border" title="heart" on-click="likeTweet"></paper-icon-button>
     </template>
 
     <template is="dom-if" if="{{retweeted}}">
-      <paper-icon-button icon="av:repeat" title="heart"></paper-icon-button>
+      <paper-icon-button icon="av:repeat" title="heart" on-click="retweet" class="on"></paper-icon-button>
     </template>
     <template is="dom-if" if="{{!retweeted}}">
-      <paper-icon-button icon="av:repeat" title="heart"></paper-icon-button>
+      <paper-icon-button icon="av:repeat" title="heart" on-click="retweet"></paper-icon-button>
     </template>
 
 
@@ -43,6 +48,15 @@
 
         var action = {
           type: (!this.favorited) ? 'FAVORITE_TWEET' : 'UNFAVORITE_TWEET',
+          id: this.tweetId
+        }
+        let event = new CustomEvent('dispatch', {detail: action});
+        document.dispatchEvent(event);
+      },
+      retweet: function(){
+
+        var action = {
+          type: (!this.retweeted) ? 'RETWEET_TWEET' : 'UNRETWEET_TWEET',
           id: this.tweetId
         }
         let event = new CustomEvent('dispatch', {detail: action});

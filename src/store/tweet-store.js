@@ -1,16 +1,15 @@
-// STATE = Rx.Observable
-var STATE = {
+
+var STATE = new Freezer({
   tweets: []
-};
-const dispatchHandler = Rx.Observable.fromEvent(document, 'dispatch');
+});
 
-function appReducer(state, action) {
-
+function processDispatch(state, action) {
   switch (action.type) {
     case 'FAVORITE_TWEET':
       state.tweets = state.tweets.map((t)=>{
-        var tweet = clone(t);
-        if(t.id_str === action.id){
+        var tweet = t;
+        if(tweet.id_str === action.id){
+          tweet = clone(t);
           tweet.favorited = true;
         }
         return tweet;
@@ -18,9 +17,30 @@ function appReducer(state, action) {
       break;
     case 'UNFAVORITE_TWEET':
       state.tweets = state.tweets.map((t)=>{
-        var tweet = clone(t);
-        if(t.id_str === action.id){
+        var tweet = t;
+        if(tweet.id_str === action.id){
+          tweet = clone(t);
           tweet.favorited = false;
+        }
+        return tweet;
+      });
+      break;
+    case 'RETWEET_TWEET':
+      state.tweets = state.tweets.map((t)=>{
+        var tweet = t;
+        if(tweet.id_str === action.id){
+          tweet = clone(t);
+          tweet.retweeted = true;
+        }
+        return tweet;
+      });
+      break;
+    case 'UNRETWEET_TWEET':
+      state.tweets = state.tweets.map((t)=>{
+        var tweet = t;
+        if(tweet.id_str === action.id){
+          tweet = clone(t);
+          tweet.retweeted = false;
         }
         return tweet;
       });
@@ -29,27 +49,22 @@ function appReducer(state, action) {
       state.tweets = state.tweets.concat(action.tweets);
       break;
     default:
-
+      console.error('ACTION UNHANDLED:',action);
   }
-  return state;
 };
+document.addEventListener('dispatch', function(e){
+  var transaction = STATE.get().transact();
+  processDispatch(transaction, e.detail);
+  STATE.get().run();
+});
 
 StoreBehavior = {
-
   properties: {
-    STATE: {
+    hub: {
       type: Object,
-      value: dispatchHandler
+      value: STATE.getEventHub()
     }
-  },
-
-  created: function() {
-    this.STATE = dispatchHandler
-      .map((e)=> e.detail)
-      .startWith(STATE)
-      .scan(appReducer);
   }
-
 };
 
 function clone(obj) {

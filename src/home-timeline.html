@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="./components/the-tweet/the-tweet.html">
-
+<link rel="import" href="./components/tweet-count/tweet-count.html">
+<link rel="import" href="./components/like-count/like-count.html">
+<script src="../bower_components/uuid-js/lib/uuid.js"></script>
 <dom-module id="home-timeline">
 
   <template>
@@ -38,6 +40,8 @@
         color: #212121;
       }
     </style>
+    <tweet-count></tweet-count>
+    <like-count></like-count>
     <div class="tweet-list">
       <template is="dom-repeat" id="tweeties" items="[[tweets]]">
         <the-tweet tweet="[[item]]"></the-tweet>
@@ -58,26 +62,25 @@
           })
           .then(tweets=>{
 
-            tweets = duplicateArr(tweets, 10);
+            // tweets = duplicateArr(tweets, 10);
             let action = {
               type: 'ADD_TWEETS',
               tweets: tweets
             }
-            let event = new CustomEvent('dispatch', {detail: action});
-            document.dispatchEvent(event);
+            console.log(tweets.length);
+            let tweetEvent = new CustomEvent('dispatch', {detail: action});
+            document.dispatchEvent(tweetEvent);
           })
 
       },
       attached: function() {
-
-        this.subscription = this.STATE
-          .subscribe((state)=>{
-            this.set('tweets', state.tweets);
-          });
+        this.hub.on('update', (newVal,oldVal)=>{
+          this.tweets = newVal.tweets;
+        });
       },
 
       detached: function() {
-        this.subscription.dispose();
+        this.hub.off('update')
       }
     });
 
@@ -86,7 +89,7 @@
       var newArr = [].concat(arr);
       for (var i = 0; i < times; i++) {
         newArr = newArr.concat(arr.map((t)=>{
-          t.id_str += inc++;
+          t.id_str = UUIDjs.create(4).hex;
           return t;
         }));
       }
